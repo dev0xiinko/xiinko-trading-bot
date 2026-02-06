@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Terminal-style base */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+  font-family: 'Courier New', 'Monaco', 'Consolas', monospace;
+}
+
+/* Custom scrollbar - terminal style */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+  border: 1px solid #333;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #444;
+  border: 1px solid #666;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Remove all rounded corners globally */
+* {
+  border-radius: 0 !important;
+}
+
+/* Terminal cursor blink */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1s infinite;
+}
+
+/* Pulse animation for status indicators */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.animate-pulse {
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+/* Terminal button style */
+button {
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+button:focus {
+  outline: 1px solid #fff;
+  outline-offset: -1px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Table styles */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+th, td {
+  border: 1px solid #333;
+}
+
+/* ASCII-style borders */
+.terminal-border {
+  border: 1px solid #fff;
+}
+
+.terminal-border-dim {
+  border: 1px solid #444;
+}
+
+/* Signal colors - more vibrant for terminal */
+.signal-buy {
+  color: #0f0;
+  background: transparent;
+  border: 1px solid #0f0;
+}
+
+.signal-sell {
+  color: #f00;
+  background: transparent;
+  border: 1px solid #f00;
+}
+
+.signal-wait {
+  color: #888;
+  background: transparent;
+  border: 1px solid #888;
+}
+
+/* Terminal text colors */
+.text-terminal-green { color: #0f0; }
+.text-terminal-red { color: #f00; }
+.text-terminal-yellow { color: #ff0; }
+.text-terminal-cyan { color: #0ff; }
+.text-terminal-magenta { color: #f0f; }
+.text-terminal-dim { color: #666; }
+
+/* Grid item animations - subtle */
+@keyframes scanline {
+  from { opacity: 0.8; }
+  to { opacity: 1; }
+}
+
+/* Selection style */
+::selection {
+  background: #fff;
+  color: #000;
+}
+
+/* Input styles */
+input, select {
+  background: #000;
+  border: 1px solid #fff;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  padding: 0.5rem;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #0f0;
+}
