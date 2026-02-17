@@ -84,15 +84,16 @@ async function executePairTrade(instId) {
     // Execute trade
     const mode = isDemoMode() ? 'demo' : 'live'
     const tradeConfig = getTradeConfig()
-    const tradeSize = String(tradeConfig.tradeSize)
+    const margin = tradeConfig.margin
     const leverage = tradeConfig.leverage
+    const positionValue = margin * leverage  // Total position value in USDT
     
-    addLog(`[${instId}] ${tradeDecision.side.toUpperCase()} @ $${ticker.last} - ${tradeSize} USDT @ ${leverage}x`, 'trade')
+    addLog(`[${instId}] ${tradeDecision.side.toUpperCase()} @ $${ticker.last} - $${margin} margin × ${leverage}x = $${positionValue} position`, 'trade')
     
     const order = await placeMarketOrder(
       instId,
       tradeDecision.side,
-      tradeSize,
+      positionValue,  // Pass position value (not margin) for contract calculation
       leverage
     )
     
@@ -100,13 +101,14 @@ async function executePairTrade(instId) {
     updatePairState(instId, tradeDecision.side)
     
     // Record trade in state (global)
-    recordTradeState(tradeDecision.side, ticker.last, tradeSize)
+    recordTradeState(tradeDecision.side, ticker.last, margin)
     
     // Add to active positions
     addPosition({
       instId: instId,
       side: tradeDecision.side,
-      size: tradeSize,
+      size: positionValue,  // Position value
+      margin: margin,       // Actual margin used
       price: ticker.last,
       orderId: order.orderId,
       mode: mode,
@@ -119,7 +121,8 @@ async function executePairTrade(instId) {
       instId: instId,
       side: tradeDecision.side,
       price: ticker.last,
-      size: tradeSize,
+      margin: margin,
+      positionValue: positionValue,
       leverage: leverage,
       signal: analysis.signal,
       fastMA: analysis.fastMA,

@@ -38,9 +38,10 @@ export async function POST(request) {
       addLog(`Demo mode ${body.demoMode ? 'enabled' : 'disabled'}`, 'info')
     }
     
-    // Update trade size
-    if (typeof body.tradeSize === 'number') {
-      setTradeConfig({ tradeSize: body.tradeSize })
+    // Update margin (supports both 'margin' and legacy 'tradeSize')
+    const marginValue = body.margin ?? body.tradeSize
+    if (typeof marginValue === 'number') {
+      setTradeConfig({ margin: marginValue })
     }
     
     // Update leverage

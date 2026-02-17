@@ -40,8 +40,8 @@ export default function Dashboard() {
   const [logs, setLogs] = useState([])
   const [lastUpdate, setLastUpdate] = useState('')
   const [demoMode, setDemoMode] = useState(false)
-  const [tradeConfig, setTradeConfig] = useState({ tradeSize: 10, leverage: 1, maxLeverage: 125 })
-  const [pendingConfig, setPendingConfig] = useState({ tradeSize: 10, leverage: 1 })
+  const [tradeConfig, setTradeConfig] = useState({ margin: 10, leverage: 1, maxLeverage: 125 })
+  const [pendingConfig, setPendingConfig] = useState({ margin: 10, leverage: 1 })
   const [configSaved, setConfigSaved] = useState(true)
   const [tradeHistory, setTradeHistory] = useState([])
   const [tradeStats, setTradeStats] = useState(null)
@@ -154,7 +154,7 @@ export default function Dashboard() {
         if (data.settings.tradeConfig) {
           setTradeConfig(data.settings.tradeConfig)
           setPendingConfig({
-            tradeSize: data.settings.tradeConfig.tradeSize,
+            margin: data.settings.tradeConfig.margin || data.settings.tradeConfig.tradeSize,
             leverage: data.settings.tradeConfig.leverage,
           })
           setConfigSaved(true)
@@ -201,7 +201,7 @@ export default function Dashboard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          tradeSize: pendingConfig.tradeSize,
+          margin: pendingConfig.margin,
           leverage: pendingConfig.leverage,
         }),
       })
@@ -209,7 +209,7 @@ export default function Dashboard() {
       if (data.success && data.settings.tradeConfig) {
         setTradeConfig(data.settings.tradeConfig)
         setPendingConfig({
-          tradeSize: data.settings.tradeConfig.tradeSize,
+          margin: data.settings.tradeConfig.margin,
           leverage: data.settings.tradeConfig.leverage,
         })
         setConfigSaved(true)
@@ -593,16 +593,16 @@ export default function Dashboard() {
               )}
             </div>
             
-            {/* Trade Size */}
+            {/* Margin */}
             <div className="mb-3">
               <label className="text-xs text-[#888] block mb-1">
-                TRADE SIZE (USDT)
+                MARGIN (USDT)
               </label>
               <div className="flex items-center gap-2">
                 <input
                   type="number"
-                  value={pendingConfig.tradeSize}
-                  onChange={(e) => updatePendingConfig('tradeSize', parseFloat(e.target.value) || 0)}
+                  value={pendingConfig.margin}
+                  onChange={(e) => updatePendingConfig('margin', parseFloat(e.target.value) || 0)}
                   min="1"
                   step="1"
                   className="flex-1 bg-black border border-[#444] text-white px-2 py-1 text-sm font-mono focus:border-[#0ff] focus:outline-none"
@@ -610,12 +610,12 @@ export default function Dashboard() {
                 <span className="text-[#666] text-xs">USDT</span>
               </div>
               <div className="flex gap-1 mt-1">
-                {[10, 25, 50, 100].map(size => (
+                {[10, 25, 50, 100, 500, 1000].map(size => (
                   <button
                     key={size}
-                    onClick={() => updatePendingConfig('tradeSize', size)}
+                    onClick={() => updatePendingConfig('margin', size)}
                     className={`px-2 py-0.5 text-xs border ${
-                      pendingConfig.tradeSize === size 
+                      pendingConfig.margin === size 
                         ? 'border-[#0ff] text-[#0ff]' 
                         : 'border-[#333] text-[#666] hover:border-[#666]'
                     }`}
@@ -623,6 +623,10 @@ export default function Dashboard() {
                     {size}
                   </button>
                 ))}
+              </div>
+              {/* Position value preview */}
+              <div className="text-xs text-[#666] mt-1">
+                Position: ${(pendingConfig.margin * pendingConfig.leverage).toLocaleString()} USDT
               </div>
             </div>
             
@@ -702,14 +706,18 @@ export default function Dashboard() {
                 <span className="text-[#f0f]">MA(21)</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#666]">Size:</span>
-                <span className="text-white">{tradeConfig.tradeSize} USDT</span>
+                <span className="text-[#666]">Margin:</span>
+                <span className="text-white">{tradeConfig.margin} USDT</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[#666]">Leverage:</span>
                 <span className={tradeConfig.leverage > 10 ? 'text-[#f00]' : tradeConfig.leverage > 1 ? 'text-[#ff0]' : 'text-white'}>
                   {tradeConfig.leverage}x
                 </span>
+              </div>
+              <div className="flex justify-between border-t border-[#333] pt-1 mt-1">
+                <span className="text-[#666]">Position:</span>
+                <span className="text-[#0ff]">${(tradeConfig.margin * tradeConfig.leverage).toLocaleString()}</span>
               </div>
             </div>
           </div>
