@@ -10,6 +10,9 @@ out/
 .env.local
 .env*.local
 
+# User config (persisted trade settings)
+.trade-config.json
+
 # IDE
 .vscode/
 .idea/
